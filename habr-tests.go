@@ -24,7 +24,7 @@ var implementations = []Implementation {
 	{"Go: sqrt(n) parallel goroutines", "./bin/go-multi-1 -n %d"},
 	{"Go: NumCPU/2 goroutines + chan", "./bin/go-multi-2 -n %d"},
 	{"Rust: release; single thread", "./bin/rust-single %d"},
-	{"Rust: release; single thread", "./bin/rust-multi %d"},
+	{"Rust: release; multi threads", "./bin/rust-multi %d"},
 }
 var maxNumbers []uint64
 var timeout time.Duration
