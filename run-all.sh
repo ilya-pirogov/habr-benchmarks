@@ -2,6 +2,7 @@
 
 set -e -o xtrace
 
+cat /proc/cpuinfo
 cat /proc/meminfo
 
 sudo bash -c "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
