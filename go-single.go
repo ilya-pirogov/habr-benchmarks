@@ -11,18 +11,15 @@ func main() {
 	flag.Parse()
 
 	arr := make([]uint64, n+1)
+	sqrtN := uint64(math.Sqrt(float64(n)))
 
-	for k1 := uint64(1); k1 <= uint64(math.Sqrt(float64(n))); k1++ {
+	for k1 := uint64(1); k1 <= sqrtN; k1++ {
 		for k2 := k1; k2 <= n/k1; k2++ {
-			var val uint64
-
 			if k1 != k2 {
-				val = k1 + k2
+				arr[k1*k2] += k1 + k2
 			} else {
-				val = k1
+				arr[k1*k2] += k1
 			}
-
-			arr[k1*k2] += val
 		}
 	}
 
