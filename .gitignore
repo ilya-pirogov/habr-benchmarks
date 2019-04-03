@@ -7,3 +7,4 @@
 rust/target
 habr-benchmarks
 bin/*
+!bin/.keep
