@@ -1,3 +1,9 @@
+.idea
+.*
 *.o
 *.hi
-.idea
+*.log
+
+rust/target
+habr-benchmarks
+bin/*

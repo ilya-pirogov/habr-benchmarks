@@ -1,0 +1,17 @@
+[package]
+name = "rust-t"
+version = "0.1.0"
+authors = ["Ilya Pirogov <ilya@steam.me>"]
+edition = "2018"
+
+[dependencies]
+clap = "~2.27.0"
+rayon = "1.0.3"
+
+[[bin]]
+name = "rust-single"
+path = "rust-single.rs"
+
+[[bin]]
+name = "rust-multi"
+path = "rust-multi.rs"

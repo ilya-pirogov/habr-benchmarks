@@ -2,11 +2,8 @@
 
 set -e -o xtrace
 
-cat /proc/cpuinfo
-cat /proc/meminfo
-
 sudo bash -c "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
-perf stat -dddd ./habr-tests -timeout 10m $@
+perf stat -dddd ./habr-benchmarks -timeout 10m 1e6 1e7 1e8 1e9 2> perf_thp_never.log
 
 sudo bash -c "echo always > /sys/kernel/mm/transparent_hugepage/enabled"
-perf stat -dddd ./habr-tests -timeout 10m $@
+perf stat -dddd ./habr-benchmarks -timeout 10m 1e6 1e7 1e8 1e9 2> perf_thp_always.log

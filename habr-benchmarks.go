@@ -15,10 +15,9 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 )
 
-
-var implementations = []Implementation {
-	{"C++: gcc -O3 -march-native; single thread", "./bin/cpp-single-gcc %d"},
-	{"C++: gcc -O3 -march-native; 10 threads", "./bin/cpp-multi-gcc %d 10"},
+var implementations = []Implementation{
+	{"C++: gcc -O3 -march-native; single thread", "./bin/cpp-single %d"},
+	{"C++: gcc -O3 -march-native; 10 threads", "./bin/cpp-multi %d 10"},
 	{"Haskell: ghc -O3; single thread", "./bin/haskell-single %d"},
 	{"Go: single thread", "./bin/go-single -n %d"},
 	{"Go: sqrt(n) parallel goroutines", "./bin/go-multi-1 -n %d"},
@@ -29,10 +28,12 @@ var implementations = []Implementation {
 }
 var maxNumbers []uint64
 var timeout time.Duration
+var usePerf bool
+var filter string
 
 type Implementation struct {
 	Name string
-	Cmd string
+	Cmd  string
 }
 type Result table.Row
 type ResultList []Result
@@ -52,8 +53,16 @@ func (r *Result) Test(n uint64, tpl string) {
 	}(time.Now())
 
 	cmd := fmt.Sprintf(tpl, n)
+
+	if usePerf {
+		cmd = "perf stat -dddd " + cmd
+	}
+
 	args := strings.Fields(cmd)
-	err = exec.CommandContext(ctx, args[0], args[1:]...).Run()
+	ex := exec.CommandContext(ctx, args[0], args[1:]...)
+	ex.Stderr = os.Stderr
+	err = ex.Run()
+
 	if err != nil && ctx.Err() != context.DeadlineExceeded {
 		fmt.Printf("\n%s: %s\n", cmd, err.Error())
 	}
@@ -119,27 +128,40 @@ func printTable(results []Result) {
 }
 
 func main() {
-	flag.DurationVar(&timeout, "timeout", 10 * time.Second, "timout for each test")
+	flag.DurationVar(&timeout, "timeout", 10*time.Minute, "timout for each test")
+	flag.BoolVar(&usePerf, "perf", true, "use perf tool for each test")
+	flag.StringVar(&filter, "filter", "", "execute only tests with specific name")
 	flag.Parse()
 
 	if flag.NArg() == 0 {
-		fmt.Printf("usage: %s 100000 1000000 10000000 ...\n", os.Args[0])
+		fmt.Printf("usage: %s 1e6 1e7 1e8 ...\n", os.Args[0])
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
 	for _, v := range flag.Args() {
-		n, err := strconv.ParseUint(v, 10, 64)
+		n, err := strconv.ParseFloat(v, 64)
 		if err != nil {
 			fmt.Printf("unable to parse %s arg: %s\n", v, err)
 			os.Exit(2)
 		}
-		maxNumbers = append(maxNumbers, n)
+		maxNumbers = append(maxNumbers, uint64(n))
 	}
 
-	results := make(ResultList, len(implementations))
+	var filtered []Implementation
+	if filter == "" {
+		filtered = implementations
+	}
 
-	for i, impl := range implementations {
+	filtered = make([]Implementation, 0)
+	for _, impl := range implementations {
+		if strings.Contains(impl.Name, filter) {
+			filtered = append(filtered, impl)
+		}
+	}
+	results := make(ResultList, len(filtered))
+
+	for i, impl := range filtered {
 		res := Result{impl.Name}
 		for _, n := range maxNumbers {
 			res.Test(n, impl.Cmd)
