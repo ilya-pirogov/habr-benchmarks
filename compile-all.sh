@@ -13,6 +13,8 @@ go build -o ./bin/go-single -ldflags "-s -w" ./go-single.go
 go build -o ./bin/go-multi-1 -ldflags "-s -w" ./go-multi-1.go
 go build -o ./bin/go-multi-2 -ldflags "-s -w" ./go-multi-2.go
 
+zig --release-fast --single-threaded --strip --name ./bin/zig-single build-exe ./zig-single.zig
+
 # have no idea how to solve dependencies without project
 # rustc -o ./bin/rust-single ./rust-single.rs -- error[E0432]: unresolved import `clap`
 # rustc -o ./bin/rust-multi ./rust-multi.rs
