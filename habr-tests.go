@@ -25,6 +25,7 @@ var implementations = []Implementation {
 	{"Go: NumCPU/2 goroutines + chan", "./bin/go-multi-2 -n %d"},
 	{"Rust: release; single thread", "./bin/rust-single %d"},
 	{"Rust: release; multi threads", "./bin/rust-multi %d"},
+	{"Zig: zig --release-fast; single thread", "./bin/zig-single %d"},
 }
 var maxNumbers []uint64
 var timeout time.Duration
