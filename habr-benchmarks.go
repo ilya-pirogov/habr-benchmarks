@@ -129,7 +129,7 @@ func printTable(results []Result) {
 
 func main() {
 	flag.DurationVar(&timeout, "timeout", 10*time.Minute, "timout for each test")
-	flag.BoolVar(&usePerf, "perf", true, "use perf tool for each test")
+	flag.BoolVar(&usePerf, "perf", false, "use perf tool for each test")
 	flag.StringVar(&filter, "filter", "", "execute only tests with specific name")
 	flag.Parse()
 
